@@ -18,6 +18,9 @@ var dot_fill = 'white';
 var center_radius;
 var center_fill = 'white';
 
+var font_family = "'Alegreya Sans SC', Helvetica, sans-serif";
+var font_zoom = 1.2; // Scale up Alegreya Sans SC glyphs
+
 var hour_len;
 var hour_width;
 var hour_circle;
@@ -73,13 +76,13 @@ function init_clock() {
   hour_len = 110 * zoom;
   hour_width = 6 * zoom;
   hour_circle = 150 * zoom;
-  hour_font_size = 48 * zoom;
+  hour_font_size = 48 * zoom * font_zoom;
   hour_background_radius = 27 * zoom;
 
   minute_len = 175 * zoom;
   minute_width = 4 * zoom;
   minute_circle = 240 * zoom;
-  minute_font_size = 32 * zoom;
+  minute_font_size = 32 * zoom * font_zoom;
 
   paper = Raphael('clock', clock_width, clock_height);
 
@@ -167,9 +170,7 @@ function draw_hour(hour, minute) {
   fill(hour_background, hour_background_fill);
 
   var text = (hour > 0 ? hour : 12).toString();
-  hour_label = paper.text(x, y, text);
-  fill(hour_label, hour_fill);
-  hour_label.attr('font-size', hour_font_size);
+  hour_label = make_text(x, y, text, hour_font_size, hour_fill);
   // hour_label.attr('font-weight', 'bold');
 }
 
@@ -216,14 +217,20 @@ function draw_minute(minute) {
   var x = center_x + Math.sin(2 * Math.PI * minute / 60) * minute_circle;
   var y = center_y - Math.cos(2 * Math.PI * minute / 60) * minute_circle;
   var text = minute < 10 ? ('0' + minute.toString()) : minute.toString();
-  minute_label = paper.text(x, y, text);
-  minute_label.attr('font-size', minute_font_size);
-  fill(minute_label, minute_fill);
+  minute_label = make_text(x, y, text, minute_font_size, minute_fill);
   if (transition_animate) {
     minute_label.rotate(start_angle - end_angle, center_x, center_y);
     minute_label.animate({'rotation' : "0 " + center_x + " " +
 	  center_y }, transition_msec);
   }
+}
+
+function make_text(x, y, text, font_size, fill_color) {
+  var text_object = paper.text(x, y, text);
+  text_object.attr('font-size', font_size);
+  text_object.attr('font-family', font_family);
+  fill(text_object, fill_color);
+  return text_object;
 }
 
 function fill(object, color) {
