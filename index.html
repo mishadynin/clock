@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>The Dynin Clock</title>
+    <link rel="stylesheet" type="text/css" href="http://mishadynin.com/md.css">
+    <script src="thirdparty/raphael-min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="clock.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" src="//www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
+    <script type="text/javascript">
+      var applicationID = '5403AC50';
+    </script>
+    <script src="thirdparty/sender.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+      window.onload = init_clock;
+    </script>
+  </head>
+  <body>
+    <h2>
+      <a href="http://mishadynin.com/md.css">=M</a> &raquo; clock
+    </h2>
+    <p>
+      Here's my attempt to build a better <strike>mousetrap</strike> clock.
+    </p>
+    <div id="clock">
+    </div>
+    <div>
+      <span id="mode">
+	Loading the clock...
+      </span>
+      <button type="button" id="b1" onclick="clicked()">Looks
+	like JavaScript is broken.</button>
+    </div>
+    <p>
+      There are two main ways to visualize time: using digital display,
+      or an analog dial.&nbsp; Each one has its advantages: digital display is
+      precise, while analog is more intuitive.&nbsp; Some watches have both
+      displays, but this results in clutter.&nbsp; The clock on this page
+      combines the best of both worlds.
+    </p>
+    <p>
+      This design can be packaged as a dedicated clock with several "skins",
+      as a feature of a digital picture frame, or perhaps as a screensaver
+      for Kindle or iPad.&nbsp; It may be especially useful in helping kids
+      learn to tell time.
+    </p>
+    <p>
+      Feedback?&nbsp; <a href="http://mishadynin.com/#contact">Contact me</a>.
+     </p>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-8800300-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
+  </body>
+</html>

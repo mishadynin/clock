@@ -1,3 +1,3 @@
 # Dynin Clock
 
-[See it in action](http://mishadynin.com/clock/)!
+[See it in action!](http://mishadynin.com/clock/)
