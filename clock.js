@@ -99,6 +99,8 @@ function init_clock() {
   var circle = paper.circle(center_x, center_y, center_radius);
   fill(circle, center_fill);
 
+  draw_signature();
+
   set_mode(!cast_mode);
   current_date = new Date();
   display_clock();
@@ -145,6 +147,12 @@ function show_time(date) {
     last_hour = new_hour;
     last_minute = new_minute;
   }
+}
+
+function draw_signature() {
+  var sig_font_size = minute_font_size * 0.4;
+  make_text(clock_width - sig_font_size * 2, clock_height - sig_font_size, "M.D.'15",
+      sig_font_size, '#686868');
 }
 
 function draw_hour(hour, minute) {
