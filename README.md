@@ -1,2 +1,3 @@
-# clock
-Digital and analog: the best of both worlds.
+# Dynin Clock
+
+[See it in action](http://mishadynin.com/clock/)!
