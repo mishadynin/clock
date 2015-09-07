@@ -151,7 +151,7 @@ function show_time(date) {
 
 function draw_signature() {
   var sig_font_size = minute_font_size * 0.4;
-  var padding = cast_mode ? sig_font_size * 3 : 0;
+  var padding = cast_mode ? sig_font_size  : 0;
   make_text(clock_width - sig_font_size * 2 - padding,
       clock_height - sig_font_size - padding,
       "M.D.'15", sig_font_size, '#686868');
