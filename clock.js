@@ -11,9 +11,11 @@ var zoom;
 var center_x;
 var center_y;
 
-var dot_circle;
-var dot_radius;
-var dot_fill = 'white';
+var animate_marks = true;
+
+var mark_circle;
+var mark_radius;
+var mark_fill = 'white';
 
 var center_radius;
 var center_fill = 'white';
@@ -48,9 +50,11 @@ var hour_label;
 var hour_background;
 var minute_hand;
 var minute_label;
+var marks_list;
 
 var last_hour = -1;
 var last_minute = -1;
+var last_seconds = -1;
 
 function init_clock() {
   cast_mode = is_cast_mode();
@@ -68,8 +72,8 @@ function init_clock() {
   center_x = clock_width / 2;
   center_y = clock_height / 2;
 
-  dot_circle = 200 * zoom;
-  dot_radius = 3 * zoom;
+  mark_circle = 200 * zoom;
+  mark_radius = 3 * zoom;
 
   center_radius = 8 * zoom;
 
@@ -89,11 +93,8 @@ function init_clock() {
   var background = paper.rect(0, 0, clock_width, clock_height);
   background.attr('fill', 'black');
 
-  for (var i = 0; i < 12; ++i) {
-    var x = center_x + Math.sin(2 * Math.PI * i / 12) * dot_circle;
-    var y = center_y - Math.cos(2 * Math.PI * i / 12) * dot_circle;
-    var dot = paper.circle(x, y, dot_radius);
-    fill(dot, dot_fill);
+  if (!animate_marks) {
+    draw_marks(0);
   }
 
   var circle = paper.circle(center_x, center_y, center_radius);
@@ -129,7 +130,7 @@ function clicked() {
 
 function display_clock() {
   if (demo_mode) {
-    current_date = new Date(current_date.getTime() + 60 * 1000);
+    current_date = new Date(current_date.getTime() + 61 * 1000);
   } else {
     current_date = new Date();
   }
@@ -147,6 +148,14 @@ function show_time(date) {
     last_hour = new_hour;
     last_minute = new_minute;
   }
+
+  if (animate_marks) {
+    var new_seconds = date.getSeconds();
+    if (new_seconds != last_seconds) {
+      draw_marks(new_seconds);
+      last_seconds = new_seconds;
+    }
+  }
 }
 
 function draw_signature() {
@@ -155,6 +164,40 @@ function draw_signature() {
   make_text(clock_width - sig_font_size * 2 - padding,
       clock_height - sig_font_size - padding,
       "M.D.'15", sig_font_size, '#686868');
+}
+
+function draw_marks(seconds) {
+  if (marks_list != null) {
+    marks_list.forEach(function(element) { element.remove(); });
+    marks_list = null;
+  }
+
+  var triangles = animate_marks;
+  marks_list = [];
+
+  for (var i = 0; i < 12; ++i) {
+    var mark_angle = 2 * Math.PI * (i / 12);
+    var x = center_x + Math.sin(mark_angle) * mark_circle;
+    var y = center_y - Math.cos(mark_angle) * mark_circle;
+    var mark;
+
+    if (triangles) {
+      var angle = mark_angle + 2 * Math.PI * (seconds / 60);
+      var r = mark_radius * 1.5;
+      var path = "M " + (x + Math.sin(angle) * r) + " " + (y - Math.cos(angle) * r);
+      angle += Math.PI * 2 / 3;
+      path += " L " + (x + Math.sin(angle) * r) + " " + (y - Math.cos(angle) * r);
+      angle += Math.PI * 2 / 3;
+      path += " L " + (x + Math.sin(angle) * r) + " " + (y - Math.cos(angle) * r);
+      path += " z";
+      mark = paper.path(path);
+    } else {
+      mark = paper.circle(x, y, mark_radius);
+    }
+
+    fill(mark, mark_fill);
+    marks_list.push(mark);
+  }
 }
 
 function draw_hour(hour, minute) {
