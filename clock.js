@@ -56,6 +56,8 @@ var last_hour = -1;
 var last_minute = -1;
 var last_seconds = -1;
 
+var two_pi = 2 * Math.PI;
+
 function init_clock() {
   cast_mode = is_cast_mode();
 
@@ -176,21 +178,21 @@ function draw_marks(seconds) {
   marks_list = [];
 
   for (var i = 0; i < 12; ++i) {
-    var mark_angle = 2 * Math.PI * (i / 12);
+    var mark_angle = two_pi * (i / 12);
     var x = center_x + Math.sin(mark_angle) * mark_circle;
     var y = center_y - Math.cos(mark_angle) * mark_circle;
     var mark;
 
     if (triangles) {
-      var angle = mark_angle + 2 * Math.PI * (seconds / 60);
+      var angle = mark_angle + two_pi * (seconds / 60);
       var r = mark_radius * 1.5;
-      var path = "M " + (x + Math.sin(angle) * r) + " " + (y - Math.cos(angle) * r);
-      angle += Math.PI * 2 / 3;
-      path += " L " + (x + Math.sin(angle) * r) + " " + (y - Math.cos(angle) * r);
-      angle += Math.PI * 2 / 3;
-      path += " L " + (x + Math.sin(angle) * r) + " " + (y - Math.cos(angle) * r);
-      path += " z";
-      mark = paper.path(path);
+      var points = [];
+      points.push({ x: x + Math.sin(angle) * r, y: y - Math.cos(angle) * r });
+      angle += two_pi / 3;
+      points.push({ x: x + Math.sin(angle) * r, y: y - Math.cos(angle) * r });
+      angle += two_pi / 3;
+      points.push({ x: x + Math.sin(angle) * r, y: y - Math.cos(angle) * r });
+      mark = make_path(points);
     } else {
       mark = paper.circle(x, y, mark_radius);
     }
@@ -209,8 +211,8 @@ function draw_hour(hour, minute) {
   }
   hour_hand.rotate(hour / 12 * 360 + minute / 60 * 30, center_x, center_y);
 
-  var x = center_x + Math.sin(2 * Math.PI * hour / 12) * hour_circle;
-  var y = center_y - Math.cos(2 * Math.PI * hour / 12) * hour_circle;
+  var x = center_x + Math.sin(two_pi * hour / 12) * hour_circle;
+  var y = center_y - Math.cos(two_pi * hour / 12) * hour_circle;
 
   if (hour_label != null) {
     hour_label.remove();
@@ -267,8 +269,8 @@ function draw_minute(minute) {
     minute_label.remove();
   }
 
-  var x = center_x + Math.sin(2 * Math.PI * minute / 60) * minute_circle;
-  var y = center_y - Math.cos(2 * Math.PI * minute / 60) * minute_circle;
+  var x = center_x + Math.sin(two_pi * minute / 60) * minute_circle;
+  var y = center_y - Math.cos(two_pi * minute / 60) * minute_circle;
   var text = minute < 10 ? ('0' + minute.toString()) : minute.toString();
   minute_label = make_text(x, y, text, minute_font_size, minute_fill);
   if (transition_animate) {
@@ -284,6 +286,15 @@ function make_text(x, y, text, font_size, fill_color) {
   text_object.attr('font-family', font_family);
   fill(text_object, fill_color);
   return text_object;
+}
+
+function make_path(points) {
+  var path = '';
+  for (var i = 0; i < points.length; ++i) {
+    path += (i == 0 ? 'M ' : 'L ') + points[i].x + ' ' + points[i].y;
+  }
+  path += " z";
+  return paper.path(path);
 }
 
 function fill(object, color) {
