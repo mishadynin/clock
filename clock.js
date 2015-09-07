@@ -99,8 +99,10 @@ function init_clock() {
     draw_marks(0);
   }
 
-  var circle = paper.circle(center_x, center_y, center_radius);
-  fill(circle, center_fill);
+  if (false) {
+    var circle = paper.circle(center_x, center_y, center_radius);
+    fill(circle, center_fill);
+  }
 
   draw_signature();
 
@@ -202,11 +204,20 @@ function draw_marks(seconds) {
   }
 }
 
+function make_hand(width, len, offset) {
+  var wide = 0.5;
+  var narrow = 0.2;
+  var points = [];
+  points.push({ x: center_x + width * wide, y: center_y - offset });
+  points.push({ x: center_x + width * narrow, y: center_y - len });
+  points.push({ x: center_x - width * narrow, y: center_y - len });
+  points.push({ x: center_x - width * wide, y: center_y - offset });
+  return make_path(points);
+}
+
 function draw_hour(hour, minute) {
   if (hour_hand == null) {
-    hour_hand = paper.rect(center_x - hour_width / 2,
-	center_y - hour_len, hour_width, hour_len,
-	hour_width / 2);
+    hour_hand = make_hand(hour_width, hour_len, hour_width);
     fill(hour_hand, center_fill);
   }
   hour_hand.rotate(hour / 12 * 360 + minute / 60 * 30, center_x, center_y);
@@ -248,9 +259,7 @@ function draw_minute(minute) {
   }
 
   if (minute_hand == null) {
-    minute_hand = paper.rect(center_x - minute_width / 2,
-	center_y - minute_len, minute_width, minute_len,
-	minute_width / 2);
+    minute_hand = make_hand(minute_width, minute_len, minute_width * 3);
     fill(minute_hand, center_fill);
     minute_hand.rotate(end_angle, center_x, center_y);
   } else {
