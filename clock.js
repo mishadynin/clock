@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2015 Misha Dynin.  All rights reserved.
+// Copyright (c) 2010-2016 Misha Dynin.  All rights reserved.
 // Built with Raphaël http://raphaeljs.com/
 
 var cast_mode;
@@ -94,11 +94,13 @@ function init_clock() {
 
   var background = paper.rect(0, 0, clock_width, clock_height);
   background.attr('fill', 'black');
+  // TODO: paper.setViewBox(0, 200, clock_width, clock_height, true);
 
   if (!animate_marks) {
     draw_marks(0);
   }
 
+  // Do not draw center circle.
   if (false) {
     var circle = paper.circle(center_x, center_y, center_radius);
     fill(circle, center_fill);
@@ -147,10 +149,12 @@ function show_time(date) {
   var new_minute = date.getMinutes();
 
   if (new_hour != last_hour || new_minute != last_minute) {
-    draw_hour(new_hour, new_minute);
+    // We must draw minute first, because hour background should be
+    // on top of the minute hand.
     draw_minute(new_minute);
-    last_hour = new_hour;
+    draw_hour(new_hour, new_minute);
     last_minute = new_minute;
+    last_hour = new_hour;
   }
 
   if (animate_marks) {
@@ -167,7 +171,7 @@ function draw_signature() {
   var padding = cast_mode ? sig_font_size  : 0;
   make_text(clock_width - sig_font_size * 2 - padding,
       clock_height - sig_font_size - padding,
-      "M.D.'15", sig_font_size, '#686868');
+      "M.D.'16", sig_font_size, '#686868');
 }
 
 function draw_marks(seconds) {
@@ -216,28 +220,22 @@ function make_hand(width, len, offset) {
 }
 
 function draw_hour(hour, minute) {
-  if (hour_hand == null) {
-    hour_hand = make_hand(hour_width, hour_len, hour_width);
-    fill(hour_hand, center_fill);
-  }
-  hour_hand.rotate(hour / 12 * 360 + minute / 60 * 30, center_x, center_y);
+  var new_hour_hand = make_hand(hour_width, hour_len, hour_width);
+  fill(new_hour_hand, center_fill);
+  new_hour_hand.rotate(hour / 12 * 360 + minute / 60 * 30, center_x, center_y);
+  hour_hand = update(new_hour_hand, hour_hand);
 
   var x = center_x + Math.sin(two_pi * hour / 12) * hour_circle;
   var y = center_y - Math.cos(two_pi * hour / 12) * hour_circle;
 
-  if (hour_label != null) {
-    hour_label.remove();
-  }
-  if (hour_background != null) {
-    hour_background.remove();
-  }
-
-  hour_background = paper.circle(x, y, hour_background_radius);
-  fill(hour_background, hour_background_fill);
+  var new_hour_background = paper.circle(x, y, hour_background_radius);
+  fill(new_hour_background, hour_background_fill);
+  hour_background = update(new_hour_background, hour_background);
 
   var text = (hour > 0 ? hour : 12).toString();
-  hour_label = make_text(x, y, text, hour_font_size, hour_fill);
-  // hour_label.attr('font-weight', 'bold');
+  var new_hour_label = make_text(x, y, text, hour_font_size, hour_fill);
+  // new_hour_label.attr('font-weight', 'bold');
+  hour_label = update(new_hour_label, hour_label);
 }
 
 function draw_minute(minute) {
@@ -258,35 +256,35 @@ function draw_minute(minute) {
     prerotate = false;
   }
 
-  if (minute_hand == null) {
-    minute_hand = make_hand(minute_width, minute_len, minute_width * 3);
-    fill(minute_hand, center_fill);
-    minute_hand.rotate(end_angle, center_x, center_y);
+  var new_minute_hand = make_hand(minute_width, minute_len, minute_width * 3);
+  fill(new_minute_hand, center_fill);
+
+  if (!transition_animate) {
+    new_minute_hand.rotate(end_angle, center_x, center_y);
   } else {
-    if (transition_animate) {
-      if (prerotate) {
-	minute_hand.rotate(start_angle, center_x, center_y);
-      }
-      minute_hand.animate({'rotation' : end_angle + " " + center_x + " " +
-	  center_y }, transition_msec);
-    } else {
-      minute_hand.rotate(end_angle, center_x, center_y);
-    }
+    new_minute_hand.rotate(start_angle, center_x, center_y);
+    animate_rotate(new_minute_hand, end_angle, center_x, center_y, transition_msec);
   }
 
-  if (minute_label != null) {
-    minute_label.remove();
-  }
+  minute_hand = update(new_minute_hand, minute_hand);
 
   var x = center_x + Math.sin(two_pi * minute / 60) * minute_circle;
   var y = center_y - Math.cos(two_pi * minute / 60) * minute_circle;
   var text = minute < 10 ? ('0' + minute.toString()) : minute.toString();
-  minute_label = make_text(x, y, text, minute_font_size, minute_fill);
+  var new_minute_label = make_text(x, y, text, minute_font_size, minute_fill);
   if (transition_animate) {
-    minute_label.rotate(start_angle - end_angle, center_x, center_y);
-    minute_label.animate({'rotation' : "0 " + center_x + " " +
-	  center_y }, transition_msec);
+    new_minute_label.rotate(start_angle - end_angle, center_x, center_y);
+    animate_rotate(new_minute_label, 0, center_x, center_y, transition_msec);
   }
+  minute_label = update(new_minute_label, minute_label);
+}
+
+function update(new_object, old_object) {
+  if (old_object != null) {
+    new_object.insertBefore(old_object);
+    old_object.remove();
+  }
+  return new_object;
 }
 
 function make_text(x, y, text, font_size, fill_color) {
@@ -309,4 +307,8 @@ function make_path(points) {
 function fill(object, color) {
   object.attr('stroke-width', 0);
   object.attr('fill', color);
+}
+
+function animate_rotate(object, end_angle, cx, cy, msec) {
+  object.animate({'transform' : 'r' + end_angle + ',' + cx + ',' + cy }, msec);
 }
