@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2016 Misha Dynin.  All rights reserved.
+// Copyright (c) 2010-2017 Misha Dynin.  All rights reserved.
 // Built with Raphaël http://raphaeljs.com/
 
 var cast_mode;
@@ -94,13 +94,13 @@ function init_clock() {
 
   var background = paper.rect(0, 0, clock_width, clock_height);
   background.attr('fill', 'black');
-  // TODO: paper.setViewBox(0, 200, clock_width, clock_height, true);
+  //paper.setViewBox(clock_width / 4, 0, clock_width / 2, clock_height, true);
 
   if (!animate_marks) {
     draw_marks(0);
   }
 
-  // Do not draw center circle.
+  // Do not draw the center circle.
   if (false) {
     var circle = paper.circle(center_x, center_y, center_radius);
     fill(circle, center_fill);
@@ -171,7 +171,7 @@ function draw_signature() {
   var padding = cast_mode ? sig_font_size  : 0;
   make_text(clock_width - sig_font_size * 2 - padding,
       clock_height - sig_font_size - padding,
-      "M.D.'16", sig_font_size, '#686868');
+      "M.D.'17", sig_font_size, '#686868');
 }
 
 function draw_marks(seconds) {
