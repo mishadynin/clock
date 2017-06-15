@@ -22,7 +22,7 @@ function init_cast() {
   // handler for the 'ready' event
   castReceiverManager.onReady = function(event) {
     console.log('Received Ready event: ' + JSON.stringify(event.data));
-    window.castReceiverManager.setApplicationState("Application status is ready...");
+    window.castReceiverManager.setApplicationState("Dynin Clock is running.");
   };
   
   // handler for 'senderconnected' event
@@ -64,6 +64,6 @@ function init_cast() {
   }
 
   // initialize the CastReceiverManager with an application status message
-  window.castReceiverManager.start({statusText: "Application is starting"});
+  window.castReceiverManager.start({statusText: "Dynin Clock is loading..."});
   console.log('Receiver Manager started');
 };
