@@ -166,7 +166,7 @@ function show_time(new_hour, new_minute, new_second) {
   if (new_hour != last_hour || new_minute != last_minute) {
     // We must draw minute first, because hour background should be
     // on top of the minute hand.
-    draw_minute(new_minute);
+    draw_minute(new_minute, (new_minute + 59) % 60 == last_minute);
     draw_hour(new_hour, new_minute);
     last_minute = new_minute;
     last_hour = new_hour;
@@ -252,32 +252,26 @@ function draw_hour(hour, minute) {
   hour_label = update(new_hour_label, hour_label);
 }
 
-function draw_minute(minute) {
+function draw_minute(minute, animate) {
   var start_angle;
   var end_angle;
-  var prerotate;
+
   if (minute == 0) {
     start_angle = 59 / 60 * 360;
     end_angle = 360;
-    prerotate = true;
-  } else if (minute == 1) {
-    start_angle = 0;
-    end_angle = minute / 60 * 360;
-    prerotate = true;
   } else {
     start_angle = (minute - 1) / 60 * 360;
     end_angle = minute / 60 * 360;
-    prerotate = false;
   }
 
   var new_minute_hand = make_hand(minute_width, minute_len, minute_width * 3);
   fill(new_minute_hand, center_fill);
 
-  if (!transition_animate) {
-    new_minute_hand.rotate(end_angle, center_x, center_y);
-  } else {
+  if (animate && transition_animate) {
     new_minute_hand.rotate(start_angle, center_x, center_y);
     animate_rotate(new_minute_hand, end_angle, center_x, center_y, transition_msec);
+  } else {
+    new_minute_hand.rotate(end_angle, center_x, center_y);
   }
 
   minute_hand = update(new_minute_hand, minute_hand);
@@ -286,7 +280,7 @@ function draw_minute(minute) {
   var y = center_y - Math.cos(two_pi * minute / 60) * minute_circle;
   var text = minute < 10 ? ('0' + minute.toString()) : minute.toString();
   var new_minute_label = make_text(x, y, text, minute_font_size, minute_fill);
-  if (transition_animate) {
+  if (animate && transition_animate) {
     new_minute_label.rotate(start_angle - end_angle, center_x, center_y);
     animate_rotate(new_minute_label, 0, center_x, center_y, transition_msec);
   }
