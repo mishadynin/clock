@@ -27,36 +27,26 @@
     </p>
     <div id="clock">
     </div>
-    <div>
-      <span id="mode">
-	Loading the clock...
-      </span>
-      <button type="button" id="b1" onclick="clicked()">Looks
-	like JavaScript is broken.</button>
-    </div>
 
-    <!--
-    <form action="">
+    <form id="modeform" action="">
       <fieldset>
         <legend>Control the Clock</legend>
         <div>
           <input type="radio" name="mode" value="demo" checked />
             Demo Mode
-            &nbsp;&nbsp;
-            hour: <input type="text" name="hour" size="2" value="7" />
-            minute: <input type="text" name="hour" size="2" value="40" />
         </div>
         <div style="padding-top: 0.4em">
           <input type="radio" name="mode" value="real" />
             Real Time
         </div>
         <div style="padding-top: 0.4em">
-          <input type="radio" name="mode" value="pause" />
-            Pause
+          <input type="radio" name="mode" value="show" />
+            Show
+            &nbsp;&nbsp; <input type="text" id="hour" size="2" value="7" />
+            : <input type="text" id="minute" size="2" value="40" />
         </div>
       </fieldset>
     </form>
-    -->
 
     <p>
       There are two main ways to visualize time: using digital display,

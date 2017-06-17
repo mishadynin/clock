@@ -40,7 +40,6 @@ var minute_font_size;
 var transition_animate = true;
 var transition_msec = 150;
 
-var demo_mode;
 var current_date;
 var display_timout_msec = 500;
 
@@ -54,7 +53,7 @@ var marks_list;
 
 var last_hour = -1;
 var last_minute = -1;
-var last_seconds = -1;
+var last_second = -1;
 
 var two_pi = 2 * Math.PI;
 
@@ -108,46 +107,62 @@ function init_clock() {
 
   draw_signature();
 
-  set_mode(!cast_mode);
   current_date = new Date();
   display_clock();
 }
 
 function is_cast_mode() {
   // The switch mode is present on the web page but not the receiver page.
-  return document.getElementById('mode') ? false : true;
+  return document.getElementById('modeform') ? false : true;
 }
 
-function describe(is_demo) {
-  return is_demo ? 'Demo Mode' : 'Real Time';
-}
-
-function set_mode(is_demo) {
-  demo_mode = is_demo;
-  if (!cast_mode) {
-    document.getElementById('mode').innerHTML = 'In ' + describe(is_demo) + '.';
-    document.getElementById('b1').innerHTML = 'Click to switch to ' + describe(!is_demo);
+function get_mode() {
+  if (cast_mode) {
+    return 'real';
+  } else {
+    return document.getElementById('modeform')['mode'].value;
   }
 }
 
-function clicked() {
-  set_mode(!demo_mode);
+function get_integer(input_id) {
+  var result = parseInt(document.getElementById(input_id).value, 10);
+
+  if (isNaN(result) || result < 0) {
+    return 0;
+  }
+
+  return result;
 }
 
 function display_clock() {
-  if (demo_mode) {
-    current_date = new Date(current_date.getTime() + 61 * 1000);
-  } else {
-    current_date = new Date();
+  var date = new Date();
+  var hour = date.getHours();
+  var minute = date.getMinutes();
+  var second = date.getSeconds();
+
+  var mode = get_mode();
+
+  if (mode == 'demo') {
+    if (last_hour != -1) {
+      minute = last_minute + 1;
+      if (minute < 60) {
+        hour = last_hour;
+      } else {
+        hour = (last_hour + 1) % 12;
+        minute = 0;
+      }
+    }
+  } else if (mode == 'show') {
+    hour = get_integer('hour');
+    minute = get_integer('minute');
   }
-  show_time(current_date);
+
+  show_time(hour % 12, minute % 60, second % 60);
+
   setTimeout('display_clock()', display_timout_msec);
 }
 
-function show_time(date) {
-  var new_hour = date.getHours() % 12;
-  var new_minute = date.getMinutes();
-
+function show_time(new_hour, new_minute, new_second) {
   if (new_hour != last_hour || new_minute != last_minute) {
     // We must draw minute first, because hour background should be
     // on top of the minute hand.
@@ -158,10 +173,9 @@ function show_time(date) {
   }
 
   if (animate_marks) {
-    var new_seconds = date.getSeconds();
-    if (new_seconds != last_seconds) {
-      draw_marks(new_seconds);
-      last_seconds = new_seconds;
+    if (new_second != last_second) {
+      draw_marks(new_second);
+      last_second = new_second;
     }
   }
 }
@@ -174,7 +188,7 @@ function draw_signature() {
       "M.D.'17", sig_font_size, '#686868');
 }
 
-function draw_marks(seconds) {
+function draw_marks(second) {
   if (marks_list != null) {
     marks_list.forEach(function(element) { element.remove(); });
     marks_list = null;
@@ -190,7 +204,7 @@ function draw_marks(seconds) {
     var mark;
 
     if (triangles) {
-      var angle = mark_angle + two_pi * (seconds / 60);
+      var angle = mark_angle + two_pi * (second / 60);
       var r = mark_radius * 1.5;
       var points = [];
       points.push({ x: x + Math.sin(angle) * r, y: y - Math.cos(angle) * r });
