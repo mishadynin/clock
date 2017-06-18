@@ -171,6 +171,19 @@ function draw_signature() {
       "M.D.'17", sig_font_size, '#686868');
 }
 
+// Translation functions.
+function tr_x(x) {
+  return x;
+}
+
+function tr_y(y) {
+  return y;
+}
+
+function tr_z(z) {
+  return z;
+}
+
 function draw_marks(second) {
   if (marks_list != null) {
     marks_list.forEach(function(element) { element.remove(); });
@@ -182,13 +195,13 @@ function draw_marks(second) {
 
   for (var i = 0; i < 12; ++i) {
     var mark_angle = two_pi * (i / 12);
-    var x = center_x + Math.sin(mark_angle) * mark_circle;
-    var y = center_y - Math.cos(mark_angle) * mark_circle;
+    var x = tr_x(center_x) + Math.sin(mark_angle) * tr_z(mark_circle);
+    var y = tr_x(center_y) - Math.cos(mark_angle) * tr_z(mark_circle);
     var mark;
 
     if (triangles) {
       var angle = mark_angle + two_pi * (second / 60);
-      var r = mark_radius * 1.5;
+      var r = tr_z(mark_radius * 1.5);
       var points = [];
       points.push({ x: x + Math.sin(angle) * r, y: y - Math.cos(angle) * r });
       angle += two_pi / 3;
@@ -197,7 +210,7 @@ function draw_marks(second) {
       points.push({ x: x + Math.sin(angle) * r, y: y - Math.cos(angle) * r });
       mark = make_path(points);
     } else {
-      mark = paper.circle(x, y, mark_radius);
+      mark = paper.circle(x, y, tr_z(mark_radius));
     }
 
     fill(mark, mark_fill);
@@ -209,28 +222,35 @@ function make_hand(width, len, offset) {
   var wide = 0.5;
   var narrow = 0.2;
   var points = [];
-  points.push({ x: center_x + width * wide, y: center_y - offset });
-  points.push({ x: center_x + width * narrow, y: center_y - len });
-  points.push({ x: center_x - width * narrow, y: center_y - len });
-  points.push({ x: center_x - width * wide, y: center_y - offset });
+
+  points.push({ x: tr_x(center_x) + tr_z(width * wide),
+                y: tr_y(center_y) - tr_z(offset) });
+  points.push({ x: tr_x(center_x) + tr_z(width * narrow),
+                y: tr_y(center_y) - tr_z(len) });
+  points.push({ x: tr_x(center_x) - tr_z(width * narrow),
+                y: tr_y(center_y) - tr_z(len) });
+  points.push({ x: tr_x(center_x) - tr_z(width * wide),
+                y: tr_y(center_y) - tr_z(offset) });
+
   return make_path(points);
 }
 
 function draw_hour(hour, minute) {
   var new_hour_hand = make_hand(hour_width, hour_len, hour_width);
   fill(new_hour_hand, hour_fill);
-  new_hour_hand.rotate(hour / 12 * 360 + minute / 60 * 30, center_x, center_y);
+  new_hour_hand.rotate(hour / 12 * 360 + minute / 60 * 30,
+      tr_x(center_x), tr_y(center_y));
   hour_hand = update(new_hour_hand, hour_hand);
 
-  var x = center_x + Math.sin(two_pi * hour / 12) * hour_circle;
-  var y = center_y - Math.cos(two_pi * hour / 12) * hour_circle;
+  var x = tr_x(center_x) + Math.sin(two_pi * hour / 12) * tr_z(hour_circle);
+  var y = tr_y(center_y) - Math.cos(two_pi * hour / 12) * tr_z(hour_circle);
 
   var new_hour_background = paper.circle(x, y, hour_background_radius);
   fill(new_hour_background, hour_background_fill);
   hour_background = update(new_hour_background, hour_background);
 
   var text = (hour > 0 ? hour : 12).toString();
-  var new_hour_label = make_text(x, y, text, hour_font_size, hour_fill);
+  var new_hour_label = make_text(x, y, text, tr_z(hour_font_size), hour_fill);
   hour_label = update(new_hour_label, hour_label);
 }
 
@@ -250,21 +270,21 @@ function draw_minute(minute, animate) {
   fill(new_minute_hand, minute_fill);
 
   if (animate) {
-    new_minute_hand.rotate(start_angle, center_x, center_y);
-    animate_rotate(new_minute_hand, end_angle, center_x, center_y, transition_msec);
+    new_minute_hand.rotate(start_angle, tr_x(center_x), tr_y(center_y));
+    animate_rotate(new_minute_hand, end_angle, tr_x(center_x), tr_y(center_y), transition_msec);
   } else {
-    new_minute_hand.rotate(end_angle, center_x, center_y);
+    new_minute_hand.rotate(end_angle, tr_x(center_x), tr_y(center_y));
   }
 
   minute_hand = update(new_minute_hand, minute_hand);
 
-  var x = center_x + Math.sin(two_pi * minute / 60) * minute_circle;
-  var y = center_y - Math.cos(two_pi * minute / 60) * minute_circle;
+  var x = tr_x(center_x) + Math.sin(two_pi * minute / 60) * tr_z(minute_circle);
+  var y = tr_y(center_y) - Math.cos(two_pi * minute / 60) * tr_z(minute_circle);
   var text = minute < 10 ? ('0' + minute.toString()) : minute.toString();
-  var new_minute_label = make_text(x, y, text, minute_font_size, minute_fill);
+  var new_minute_label = make_text(x, y, text, tr_z(minute_font_size), minute_fill);
   if (animate) {
-    new_minute_label.rotate(start_angle - end_angle, center_x, center_y);
-    animate_rotate(new_minute_label, 0, center_x, center_y, transition_msec);
+    new_minute_label.rotate(start_angle - end_angle, tr_x(center_x), tr_y(center_y));
+    animate_rotate(new_minute_label, 0, tr_x(center_x), tr_y(center_y), transition_msec);
   }
   minute_label = update(new_minute_label, minute_label);
 }
