@@ -51,6 +51,10 @@ var last_hour = -1;
 var last_minute = -1;
 var last_second = -1;
 
+var translate_x = 0;
+var translate_y = 0;
+var translate_z = 1;
+
 var two_pi = 2 * Math.PI;
 
 function init_clock() {
@@ -145,22 +149,23 @@ function display_clock() {
 }
 
 function show_time(new_hour, new_minute, new_second) {
-  if (new_hour != last_hour || new_minute != last_minute) {
-    // We must draw minute first, because hour background should be
-    // on top of the minute hand.
-    draw_minute(new_minute,
-        transition_animate && ((new_minute + 59) % 60 == last_minute));
-    draw_hour(new_hour, new_minute);
-    last_minute = new_minute;
-    last_hour = new_hour;
+  if (new_hour == last_hour && new_minute == last_minute && new_second == last_second) {
+    return;
   }
 
-  if (animate_marks || last_second == -1) {
-    if (new_second != last_second) {
-      draw_marks(new_second);
-      last_second = new_second;
-    }
-  }
+  calculate_translation(new_hour, new_minute);
+
+  draw_marks(new_second);
+  last_second = new_second;
+
+  // We must draw minute first, because hour background should be
+  // on top of the minute hand.
+  draw_minute(new_minute,
+      transition_animate && ((new_minute + 59) % 60 == last_minute));
+  draw_hour(new_hour, new_minute);
+
+  last_minute = new_minute;
+  last_hour = new_hour;
 }
 
 function draw_signature() {
@@ -173,15 +178,23 @@ function draw_signature() {
 
 // Translation functions.
 function tr_x(x) {
-  return x;
+  return x + translate_x;
 }
 
 function tr_y(y) {
-  return y;
+  return y + translate_y;
 }
 
 function tr_z(z) {
-  return z;
+  return z * translate_z;
+}
+
+function calculate_translation(hour, minute) {
+  var x = Math.sin(two_pi * minute / 60) * minute_circle;
+  var y = - Math.cos(two_pi * minute / 60) * minute_circle;
+
+  //translate_x = -x;
+  //translate_y = -y;
 }
 
 function draw_marks(second) {
@@ -190,16 +203,16 @@ function draw_marks(second) {
     marks_list = null;
   }
 
-  var triangles = animate_marks;
+  var draw_triangles = animate_marks;
   marks_list = [];
 
   for (var i = 0; i < 12; ++i) {
     var mark_angle = two_pi * (i / 12);
     var x = tr_x(center_x) + Math.sin(mark_angle) * tr_z(mark_circle);
-    var y = tr_x(center_y) - Math.cos(mark_angle) * tr_z(mark_circle);
+    var y = tr_y(center_y) - Math.cos(mark_angle) * tr_z(mark_circle);
     var mark;
 
-    if (triangles) {
+    if (draw_triangles) {
       var angle = mark_angle + two_pi * (second / 60);
       var r = tr_z(mark_radius * 1.5);
       var points = [];
