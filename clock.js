@@ -17,9 +17,6 @@ var mark_circle;
 var mark_radius;
 var mark_fill = 'white';
 
-var center_radius;
-var center_fill = 'white';
-
 var font_family = "'Alegreya Sans SC', Helvetica, sans-serif";
 var font_zoom = 1.2; // Scale up Alegreya Sans SC glyphs
 
@@ -75,8 +72,6 @@ function init_clock() {
   mark_circle = 200 * zoom;
   mark_radius = 3 * zoom;
 
-  center_radius = 8 * zoom;
-
   hour_len = 110 * zoom;
   hour_width = 6 * zoom;
   hour_circle = 150 * zoom;
@@ -92,17 +87,6 @@ function init_clock() {
 
   var background = paper.rect(0, 0, clock_width, clock_height);
   background.attr('fill', 'black');
-  //paper.setViewBox(clock_width / 4, 0, clock_width / 2, clock_height, true);
-
-  if (!animate_marks) {
-    draw_marks(0);
-  }
-
-  // Do not draw the center circle.
-  if (false) {
-    var circle = paper.circle(center_x, center_y, center_radius);
-    fill(circle, center_fill);
-  }
 
   draw_signature();
 
@@ -171,7 +155,7 @@ function show_time(new_hour, new_minute, new_second) {
     last_hour = new_hour;
   }
 
-  if (animate_marks) {
+  if (animate_marks || last_second == -1) {
     if (new_second != last_second) {
       draw_marks(new_second);
       last_second = new_second;
@@ -234,7 +218,7 @@ function make_hand(width, len, offset) {
 
 function draw_hour(hour, minute) {
   var new_hour_hand = make_hand(hour_width, hour_len, hour_width);
-  fill(new_hour_hand, center_fill);
+  fill(new_hour_hand, hour_fill);
   new_hour_hand.rotate(hour / 12 * 360 + minute / 60 * 30, center_x, center_y);
   hour_hand = update(new_hour_hand, hour_hand);
 
@@ -247,7 +231,6 @@ function draw_hour(hour, minute) {
 
   var text = (hour > 0 ? hour : 12).toString();
   var new_hour_label = make_text(x, y, text, hour_font_size, hour_fill);
-  // new_hour_label.attr('font-weight', 'bold');
   hour_label = update(new_hour_label, hour_label);
 }
 
@@ -264,7 +247,7 @@ function draw_minute(minute, animate) {
   }
 
   var new_minute_hand = make_hand(minute_width, minute_len, minute_width * 3);
-  fill(new_minute_hand, center_fill);
+  fill(new_minute_hand, minute_fill);
 
   if (animate) {
     new_minute_hand.rotate(start_angle, center_x, center_y);
