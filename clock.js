@@ -40,7 +40,6 @@ var minute_font_size;
 var transition_animate = true;
 var transition_msec = 150;
 
-var current_date;
 var display_timout_msec = 500;
 
 var paper;
@@ -107,7 +106,6 @@ function init_clock() {
 
   draw_signature();
 
-  current_date = new Date();
   display_clock();
 }
 
@@ -166,7 +164,8 @@ function show_time(new_hour, new_minute, new_second) {
   if (new_hour != last_hour || new_minute != last_minute) {
     // We must draw minute first, because hour background should be
     // on top of the minute hand.
-    draw_minute(new_minute, (new_minute + 59) % 60 == last_minute);
+    draw_minute(new_minute,
+        transition_animate && ((new_minute + 59) % 60 == last_minute));
     draw_hour(new_hour, new_minute);
     last_minute = new_minute;
     last_hour = new_hour;
@@ -267,7 +266,7 @@ function draw_minute(minute, animate) {
   var new_minute_hand = make_hand(minute_width, minute_len, minute_width * 3);
   fill(new_minute_hand, center_fill);
 
-  if (animate && transition_animate) {
+  if (animate) {
     new_minute_hand.rotate(start_angle, center_x, center_y);
     animate_rotate(new_minute_hand, end_angle, center_x, center_y, transition_msec);
   } else {
@@ -280,7 +279,7 @@ function draw_minute(minute, animate) {
   var y = center_y - Math.cos(two_pi * minute / 60) * minute_circle;
   var text = minute < 10 ? ('0' + minute.toString()) : minute.toString();
   var new_minute_label = make_text(x, y, text, minute_font_size, minute_fill);
-  if (animate && transition_animate) {
+  if (animate) {
     new_minute_label.rotate(start_angle - end_angle, center_x, center_y);
     animate_rotate(new_minute_label, 0, center_x, center_y, transition_msec);
   }
