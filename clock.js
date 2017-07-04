@@ -189,13 +189,63 @@ function tr_z(z) {
   return z * translate_z;
 }
 
-function calculate_translation(hour, minute) {
-  var x = Math.sin(two_pi * minute / 60) * minute_circle;
-  var y = - Math.cos(two_pi * minute / 60) * minute_circle;
+var debug_rect = true;
+var minutes_r;
+var hours_r;
+var hoursh_r;
+var center_r;
+var joined_r;
 
-  //translate_x = -x;
-  //translate_y = -y;
+function draw_r(rect, color) {
+  var r = paper.rect(tr_x(rect.left + center_x),
+                     tr_y(rect.top +  center_y),
+                     rect.right - rect.left,
+                     rect.bottom - rect.top);
+  fill(r, color);
+  return r;
 }
+
+function calculate_translation(hour, minute) {
+  var minutes_rect = make_rectangle(minute_circle, minute / 60, minute_font_size);
+  var hours_rect = make_rectangle(hour_circle, hour / 12, hour_background_radius * 1.3);
+  var hours_hand_rect = make_rectangle(hour_len, hour / 12 + minute / 60 / 12, 5);
+  var center_rect = make_rectangle(0, 0, 25);
+
+  var joined_rect = join_rectangles(minutes_rect, hours_rect);
+  joined_rect = join_rectangles(joined_rect, hours_hand_rect);
+  joined_rect = join_rectangles(joined_rect, center_rect);
+
+//  var width = joined_rect.right - joined_rect.left;
+//  var height = joined_rect.bottom - joined_rect.top;
+//  console.log('left ' + joined_rect.left + ' right ' + joined_rect.right + ' width ' +width);
+  translate_x = - (joined_rect.right + joined_rect.left) / 2;
+  translate_y = - (joined_rect.bottom + joined_rect.top) / 2;
+
+  if (debug_rect) {
+    joined_r = update(draw_r(joined_rect, 'red'), joined_r);
+
+    minutes_r = update(draw_r(minutes_rect, 'blue'), minutes_r);
+    hours_r = update(draw_r(hours_rect, 'blue'), hours_r);
+    hoursh_r = update(draw_r(hours_hand_rect, 'green'), hoursh_r);
+    center_r = update(draw_r(center_rect, 'green'), center_r);
+  }
+}
+
+function make_rectangle(main_radius, angle, end_radius) {
+  var x = Math.sin(two_pi * angle) * main_radius;
+  var y = - Math.cos(two_pi * angle) * main_radius;
+
+  return { top:    y - end_radius, right: x + end_radius,
+           bottom: y + end_radius, left: x - end_radius };
+}
+
+function join_rectangles(a, b) {
+  return { top:    Math.min(a.top, b.top),
+           right:  Math.max(a.right, b.right),
+           bottom: Math.max(a.bottom, b.bottom),
+           left:   Math.min(a.left, b.left) };
+}
+
 
 function draw_marks(second) {
   if (marks_list != null) {
