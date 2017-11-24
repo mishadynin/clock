@@ -211,13 +211,14 @@ function draw_r(rect, color) {
 
 function calculate_translation(hour, minute) {
   var minutes_rect = make_rectangle(minute_circle, minute / 60, minute_font_size);
-  var hours_rect = make_rectangle(hour_circle, hour / 12, hour_background_radius * 1.3);
-  var hours_hand_rect = make_rectangle(hour_len, hour / 12 + minute / 60 / 12, 5);
-  var center_rect = make_rectangle(0, 0, 25);
+  // var hours_rect = make_rectangle(hour_circle, hour / 12, hour_background_radius * 1.3);
+  // var hours_hand_rect = make_rectangle(hour_len, hour / 12 + minute / 60 / 12, 5);
+  var center_rect = make_center_rectangle(minute_circle + 1.5 * minute_font_size,
+      mark_circle + 3 * mark_radius);
 
-  var joined_rect = join_rectangles(minutes_rect, hours_rect);
-  joined_rect = join_rectangles(joined_rect, hours_hand_rect);
-  joined_rect = join_rectangles(joined_rect, center_rect);
+  var joined_rect = join_rectangles(minutes_rect, center_rect);
+  //joined_rect = join_rectangles(joined_rect, hours_hand_rect);
+  //joined_rect = join_rectangles(joined_rect, center_rect);
 
   var width = joined_rect.right - joined_rect.left;
   var height = joined_rect.bottom - joined_rect.top;
@@ -235,8 +236,8 @@ function calculate_translation(hour, minute) {
     joined_r = update(draw_r(joined_rect, 'red'), joined_r);
 
     minutes_r = update(draw_r(minutes_rect, 'blue'), minutes_r);
-    hours_r = update(draw_r(hours_rect, 'blue'), hours_r);
-    hoursh_r = update(draw_r(hours_hand_rect, 'green'), hoursh_r);
+    // hours_r = update(draw_r(hours_rect, 'blue'), hours_r);
+    // hoursh_r = update(draw_r(hours_hand_rect, 'green'), hoursh_r);
     center_r = update(draw_r(center_rect, 'green'), center_r);
   }
 }
@@ -247,6 +248,11 @@ function make_rectangle(main_radius, angle, end_radius) {
 
   return { top:    y - end_radius, right: x + end_radius,
            bottom: y + end_radius, left: x - end_radius };
+}
+
+function make_center_rectangle(half_width, half_height) {
+  return { top:    - half_height, right: half_width,
+           bottom:   half_height, left:  - half_width };
 }
 
 function join_rectangles(a, b) {
