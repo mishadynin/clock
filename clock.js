@@ -208,11 +208,11 @@ function draw_r(rect, color) {
 }
 
 function calculate_translation(hour, minute) {
-  var minutes_rect = make_rectangle(minute_circle, minute / 60, minute_font_size);
+  var minutes_rect = make_rectangle(minute_circle, minute / 60, 1.2 * minute_font_size);
   // var hours_rect = make_rectangle(hour_circle, hour / 12, hour_background_radius * 1.3);
   // var hours_hand_rect = make_rectangle(hour_len, hour / 12 + minute / 60 / 12, 5);
   var center_rect = make_center_rectangle(minute_circle + 1.2 * minute_font_size,
-      mark_circle + 4 * mark_radius);
+      mark_circle + 7 * mark_radius);
 
   var joined_rect = join_rectangles(minutes_rect, center_rect);
   //joined_rect = join_rectangles(joined_rect, hours_hand_rect);
