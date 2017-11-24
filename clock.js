@@ -37,8 +37,6 @@ var minute_font_size;
 var transition_animate = true;
 var transition_msec = 150;
 
-var zoom_margin = 0.7;
-
 var display_timout_msec = 500;
 
 var paper;
@@ -191,7 +189,7 @@ function tr_z(z) {
   return z * translate_z;
 }
 
-var debug_rect = true;
+var debug_rect = false;
 var minutes_r;
 var hours_r;
 var hoursh_r;
@@ -213,8 +211,8 @@ function calculate_translation(hour, minute) {
   var minutes_rect = make_rectangle(minute_circle, minute / 60, minute_font_size);
   // var hours_rect = make_rectangle(hour_circle, hour / 12, hour_background_radius * 1.3);
   // var hours_hand_rect = make_rectangle(hour_len, hour / 12 + minute / 60 / 12, 5);
-  var center_rect = make_center_rectangle(minute_circle + 1.5 * minute_font_size,
-      mark_circle + 3 * mark_radius);
+  var center_rect = make_center_rectangle(minute_circle + 1.2 * minute_font_size,
+      mark_circle + 4 * mark_radius);
 
   var joined_rect = join_rectangles(minutes_rect, center_rect);
   //joined_rect = join_rectangles(joined_rect, hours_hand_rect);
@@ -223,7 +221,7 @@ function calculate_translation(hour, minute) {
   var width = joined_rect.right - joined_rect.left;
   var height = joined_rect.bottom - joined_rect.top;
 
-  var zoom = zoom_margin * Math.min(clock_width / width, clock_height / height);
+  var zoom = Math.min(clock_width / width, clock_height / height);
   if (zoom < 1) {
     zoom = 1;
   }
