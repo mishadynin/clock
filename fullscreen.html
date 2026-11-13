@@ -2,17 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>The Dynin Clock: Dispalyed On Chromecast</title>
+    <title>The Dynin Clock: Dispalyed Full Screen</title>
 
-    <script type="text/javascript"
-	src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
-    <script src="thirdparty/receiver.js" type="text/javascript" charset="utf-8"></script>
     <script src="thirdparty/raphael-min2.js" type="text/javascript" charset="utf-8"></script>
     <script src="clock.js" type="text/javascript" charset="utf-8"></script>
 
     <script type="text/javascript">
       window.onload = function() {
-	init_cast();
+	//init_cast();
 	init_clock();
       }
     </script>
@@ -20,11 +17,17 @@
     <style type="text/css">
       body {
 	color: #FFFFFF;
-	background-color: green;
+	background-color: black; // green;
 	border: 0px;
 	margin: 0px;
 	padding: 0px;
 	overflow: hidden;
+      }
+      @font-face {
+        font-family: "VAG Rounded";
+        src: url("thirdparty/OPTIVagRound-Bold.otf") format("opentype");
+        font-weight: bold;
+        font-style: normal;
       }
     </style>
   </head>

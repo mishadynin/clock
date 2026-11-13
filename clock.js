@@ -1,7 +1,7 @@
 // Copyright (c) 2010-2017 Misha Dynin.  All rights reserved.
 // Built with Raphaël http://raphaeljs.com/
 
-var cast_mode;
+var full_screen_mode;
 
 var clock_width;
 var clock_height;
@@ -58,11 +58,11 @@ var translate_z = 1;
 var two_pi = 2 * Math.PI;
 
 function init_clock() {
-  cast_mode = is_cast_mode();
+  full_screen_mode = is_full_screen_mode();
 
-  if (cast_mode) {
-    clock_width = 1280;
-    clock_height = 720;
+  if (full_screen_mode) {
+    clock_width = 960;
+    clock_height = 640;
     zoom = 1.3;
   } else {
     clock_width = 970;
@@ -97,13 +97,13 @@ function init_clock() {
   display_clock();
 }
 
-function is_cast_mode() {
-  // The switch mode is present on the web page but not the receiver page.
+function is_full_screen_mode() {
+  // The switch mode is present on the web page but not on the full screen page.
   return document.getElementById('modeform') ? false : true;
 }
 
 function get_mode() {
-  if (cast_mode) {
+  if (full_screen_mode) {
     return 'real';
   } else {
     return document.getElementById('modeform')['mode'].value;
@@ -170,10 +170,10 @@ function show_time(new_hour, new_minute, new_second) {
 
 function draw_signature() {
   var sig_font_size = minute_font_size * 0.4;
-  var padding = cast_mode ? sig_font_size  : 0;
+  var padding = full_screen_mode ? sig_font_size  : 0;
   make_text(clock_width - sig_font_size * 2 - padding,
       clock_height - sig_font_size - padding,
-      "M.D.'17", sig_font_size, '#686868');
+      "M.D.'26", sig_font_size, '#686868');
 }
 
 // Translation functions.
