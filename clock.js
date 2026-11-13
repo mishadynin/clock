@@ -17,7 +17,7 @@ var mark_circle;
 var mark_radius;
 var mark_fill = 'white';
 
-var font_family = "'Alegreya Sans SC', Helvetica, sans-serif";
+var font_family = "'VAG Rounded', Helvetica, sans-serif";
 var font_zoom = 1.2; // Scale up Alegreya Sans SC glyphs
 
 var hour_len;
