@@ -298,18 +298,22 @@ function draw_marks(second) {
 function make_hand(width, len, offset) {
   var wide = 0.5;
   var narrow = 0.2;
-  var points = [];
 
-  points.push({ x: tr_x(0) + tr_z(width * wide),
-                y: tr_y(0) - tr_z(offset) });
-  points.push({ x: tr_x(0) + tr_z(width * narrow),
-                y: tr_y(0) - tr_z(len) });
-  points.push({ x: tr_x(0) - tr_z(width * narrow),
-                y: tr_y(0) - tr_z(len) });
-  points.push({ x: tr_x(0) - tr_z(width * wide),
-                y: tr_y(0) - tr_z(offset) });
+  // Tapered hand with semicircular caps at both ends.
+  var cx = tr_x(0);
+  var base_r = tr_z(width * wide);
+  var tip_r = tr_z(width * narrow);
+  var base_y = tr_y(0) - tr_z(offset);
+  var tip_y = tr_y(0) - tr_z(len) + tip_r;
 
-  return make_path(points);
+  var path = 'M ' + (cx + base_r) + ' ' + base_y +
+      ' L ' + (cx + tip_r) + ' ' + tip_y +
+      ' A ' + tip_r + ' ' + tip_r + ' 0 0 0 ' + (cx - tip_r) + ' ' + tip_y +
+      ' L ' + (cx - base_r) + ' ' + base_y +
+      ' A ' + base_r + ' ' + base_r + ' 0 0 0 ' + (cx + base_r) + ' ' + base_y +
+      ' z';
+
+  return paper.path(path);
 }
 
 function draw_hour(hour, minute) {
